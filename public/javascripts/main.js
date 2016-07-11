@@ -15,7 +15,13 @@ $("#messageForm").submit(function( event ) {
     return false;
 });
 
-    socket.on('chat message', function(msg){
+// socket.on('chat message', function(msg){
+//     console.log("Message received: " + msg);
+//     $("#messagesField").append("<li>").text(msg);
+// });
+
+socket.on("message inserted into DB", function(msg){
     console.log("Message received: " + msg);
-    $("#messagesField").text(msg);
-})
+    $("#messagesField").append("<li>").text(msg);
+});
+
