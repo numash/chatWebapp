@@ -4,74 +4,53 @@ var app = express();
 var server = app.listen(8080);
 var io = require('socket.io').listen(server);
 
-//--------------------------
-var MongoClient = require('mongodb').MongoClient;
-var assert = require('assert');
-var ObjectId = require('mongodb').ObjectID;
-
-var url = 'mongodb://localhost:12345/test';
-//-----------------------------------------
+var dbManager = require("../lib/db/dbManager");
 
 app.get('/', function(req, res){
-    res.render('index', { title: 'SS' });
+    res.redirect('/chat');
+});
+
+app.get('/chat', function(req, res){
+
+    // dbManager.removeAllMessages(function(err){
+    //     console.log(err);
+    //     throw err;
+    // });
+
+    dbManager.getLastMessages(function(err){
+    //dbManager.getAllMessages(function(err){
+        console.log(err);
+        throw err;
+    },
+    function(data) {
+        //console.log(JSON.stringify(data));
+        res.render('index', { title: 'SS', messages: data});
+    });
 });
 
 io.on('connection', function(socket){
 
-    socket.on('chat message', function(msg){
-        //io.emit('chat message', msg);
-        //console.log('message: ' + msg);
-
-        MongoClient.connect(url, function(err, db) {
-            assert.equal(null, err);
-            //console.log("Connected correctly to server.");
-
-            insertDocument(db, msg, function() {
-                io.emit('message inserted into DB', msg);
-                db.close();
-            });
+    socket.on('chat message', function(author, msg){
+        dbManager.insertIntoDB(author, msg, function(err){
+            console.log(err);
+            throw err;
+        }, function(){
+            io.emit('message inserted into DB', author, msg);
         });
+    });
 
-        MongoClient.connect(url, function(err, db) {
-            assert.equal(null, err);
-            findMessages(db, function() {
-                db.close();
-            });
+    socket.on('message inserted into DB', function(author, msg){
+        var messages;
+        dbManager.getLastMessages(function(err){
+        //dbManager.getAllMessages(function(err){
+            console.log(err);
+            throw err;
+        },
+        function (data) {
+            messages = data;
         });
     });
 });
-
-var insertDocument = function(db, msg, callback) {
-    db.collection('messages').insertOne( {
-        "date" : new Date("2015-03-25T12:00:00"),
-        "author": "Masha",
-        "text": msg
-    }, function(err, result) {
-        assert.equal(err, null);
-        console.log("A message '" + msg + "' has been inserted into the messages history.");
-        callback();
-    });
-};
-
-var findMessages = function(db, callback) {
-    var cursor = db.collection('messages').find( );
-    cursor.each(function(err, doc) {
-        assert.equal(err, null);
-        if (doc != null) {
-            //console.dir(doc);
-            console.log(doc);
-        } else {
-            callback();
-        }
-    });
-};
-
-var removeMessages = function(db, callback) {
-    db.collection('messages').deleteMany( {}, function(err, results) {
-        console.log(results);
-        callback();
-    });
-};
 
 server.listen("8080", function(){
     console.log('listening on *: ' + "8080");

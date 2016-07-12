@@ -7,8 +7,7 @@ a {
   color: #00B7FF;
 }
 
-.mainField{
-  width: 200px;
-  height: 200px;
-  border: solid;
+.chatField{
+  height: 450px;
+  overflow-y: scroll;
 }
