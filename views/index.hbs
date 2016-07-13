@@ -1,9 +1,10 @@
-<p>Welcome to {{title}}</p>
+<p>Hallo, {{user.username}}</p>
+<button><a href="/signout">Logout</a></button>
 
 <div class="panel panel-default panel-body chatField" id="mainField">
     <ul id="messagesField" class="list-group">
         {{#each messages}}
-            <li class="list-group-item">{{author}}:{{text}}</li>
+            <li class="list-group-item">{{author}}: {{text}}</li>
         {{/each }}
     </ul>
 </div>
