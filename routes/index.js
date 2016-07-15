@@ -60,7 +60,7 @@ module.exports = function(passport){
             },
             function(data) {
                 //console.log(JSON.stringify(data));
-                res.render('index', { title: 'SS', user: req.user, messages: data});
+                res.render('index', { user: req.user, messages: data});
             });
     });
 
@@ -70,23 +70,25 @@ module.exports = function(passport){
 io.on('connection', function(socket){
 
     socket.on('chat message', function(author, msg){
+
+        console.log("USER + MSG = " + author + " " + msg);
+
         dbManager.insertIntoDB(author, msg, function(err){
             console.log(err);
             throw err;
         }, function(){
-            io.emit('message inserted into DB', author, msg);
-        });
-    });
 
-    socket.on('message inserted into DB', function(author, msg){
-        var messages;
-        dbManager.getLastMessages(function(err){
-        //dbManager.getAllMessages(function(err){
-            console.log(err);
-            throw err;
-        },
-        function (data) {
-            messages = data;
+            var message;
+            dbManager.getLastMessage(function(err){
+                    console.log(err);
+                    throw err;
+                },
+                function (data) {
+
+                    //console.log(data);
+
+                    io.emit('message received', data);
+                });
         });
     });
 });

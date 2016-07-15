@@ -4,27 +4,27 @@
 
 "use strict";
 
-var author = "numash";
-
 $().ready( function(){
     var mainField = document.getElementById('mainField');
     mainField.scrollTop = mainField.scrollHeight;
 } );
 
 $("#messageForm").submit(function( event ) {
+
     event.preventDefault();
     var message = event.currentTarget[0].value;
-    //console.log("Message to send: " + message);
-
+    var user = $('#messageForm :input')[1].value;
     $("#message").val("");
-
-    socket.emit('chat message', author, message);
+console.log("message sent: " + message);
+    socket.emit('chat message', user, message);
     return false;
 });
 
-socket.on("message inserted into DB", function(author, msg){
-    console.log("Message received: " + msg);
-    $("#messagesField").append($('<li class="list-group-item">').text(author + ': ' + msg));
+socket.on("message received", function(message){
+
+    console.log("Message received: " + message.message);
+
+    $("#messagesField").append($('<li class="list-group-item">').text(message.author + ': ' + message.message));
 
     var mainField = document.getElementById('mainField');
     mainField.scrollTop = mainField.scrollHeight;
