@@ -15,14 +15,14 @@ $("#messageForm").submit(function( event ) {
     var message = event.currentTarget[0].value;
     var user = $('#messageForm :input')[1].value;
     $("#message").val("");
-console.log("message sent: " + message);
-    socket.emit('chat message', user, message);
+    
+    socket.emit('chat message',user, message);
     return false;
 });
 
 socket.on("message received", function(message){
 
-    console.log("Message received: " + message.message);
+    //console.log("Message received: " + message.message);
 
     $("#messagesField").append($('<li class="list-group-item">').text(message.author + ': ' + message.message));
 
