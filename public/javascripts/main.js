@@ -7,6 +7,8 @@
 $().ready( function(){
     var mainField = document.getElementById('mainField');
     mainField.scrollTop = mainField.scrollHeight;
+
+    //setMessagesColor();
 } );
 
 $("#messageForm").submit(function( event ) {
@@ -22,11 +24,20 @@ $("#messageForm").submit(function( event ) {
 
 socket.on("message received", function(message){
 
-    //console.log("Message received: " + message.message);
-
     $("#messagesField").append($('<li class="list-group-item">').text(message.author + ': ' + message.message));
 
     var mainField = document.getElementById('mainField');
     mainField.scrollTop = mainField.scrollHeight;
 });
+
+function setMessagesColor(){
+    $('ul li').each(function(i)
+    {
+        $(this).css("color", "blue");
+    });
+}
+
+function getMessageColor(user){
+    return user.sex === "Male" ? "blue" : "pink";
+}
 

@@ -1,11 +1,17 @@
-<p>Hallo, {{user.username}}</p>
-<button><a href="/signout">Logout</a></button>
+<div class="header-div">
+    <h2>Welcome, <span class="username">{{user.username}}</span>!</h2>
+    <a href="/signout" class="btn orange">Logout</a>
+</div>
 
 <div class="panel panel-default panel-body chatField" id="mainField">
     <ul id="messagesField" class="list-group">
         {{#each messages}}
             <li class="list-group-item">{{author}}: {{message}}</li>
         {{/each }}
+        <script type="x-handlebars-template">
+            var currentUser = {{{getAuthor messages}}};
+            console.log();
+        </script>
     </ul>
 </div>
 

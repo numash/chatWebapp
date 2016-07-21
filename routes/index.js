@@ -8,6 +8,8 @@ var io = require('socket.io').listen(server);
 
 var dbManager = require("../lib/db/dbManager");
 
+var hbs = require('hbs');
+
 /*app.get('/', function(req, res){
     res.redirect('/chat');
 });*/
@@ -52,14 +54,17 @@ module.exports = function(passport){
         //     console.log(err);
         //     throw err;
         // });
+
+        hbs.registerHelper('getAuthor', function(context) {
+            return JSON.stringify(context);
+        });
     
         dbManager.getLastMessages(function(err){
-                //dbManager.getAllMessages(function(err){
                 console.log(err);
                 throw err;
             },
             function(data) {
-                //console.log(JSON.stringify(data));
+
                 res.render('index', { user: req.user, messages: data});
             });
     });
@@ -70,8 +75,6 @@ module.exports = function(passport){
 io.on('connection', function(socket){
 
     socket.on('chat message', function(author, msg){
-
-        //console.log("USER + MSG = " + author + " " + msg);
 
         dbManager.insertIntoDB(author, msg, function(err){
             console.log(err);
